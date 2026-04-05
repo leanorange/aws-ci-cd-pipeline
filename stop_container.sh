@@ -1,6 +1,6 @@
 #!/bin/bash
-# Pull the latest Docker image from Docker Hub
-docker pull alihassan021/python-app:latest
-
-# Run the container in the background on port 5000
-docker run -d -p 5000:5000 alihassan021/python-app:latest
+# Get the running container ID and force-remove it
+CONTAINER_ID=$(docker ps -q)
+if [ -n "$CONTAINER_ID" ]; then
+  docker rm -f $CONTAINER_ID
+fi
