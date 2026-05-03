@@ -8,7 +8,7 @@ env:
 
   # Pull from Secrets Manager
   secrets-manager:
-    DOCKER_PASSWORD: myapp/docker/password:docker_password
+    DOCKER_PASSWORD: myapp/docker/password
 
 phases:
   pre_build:
