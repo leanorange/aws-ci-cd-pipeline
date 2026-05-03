@@ -1,24 +1,28 @@
 version: 0.2
-
 env:
+  # Pull from SSM Parameter Store
   parameter-store:
-    DOCKER_REGISTRY_USERNAME: /python-app/docker-credentials/username
-    DOCKER_REGISTRY_PASSWORD: /python-app/docker-credentials/password
-    DOCKER_REGISTRY_URL: /python-app/docker-registry/url
+    DOCKER_USERNAME: /myapp/docker/username
+    DOCKER_REGISTRY:  /myapp/docker/registry_url
+
+  # Pull from Secrets Manager
+  secrets-manager:
+    DOCKER_PASSWORD: myapp/docker/password:docker_password
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.11
   pre_build:
     commands:
-      - pip install -r python-app/requirements.txt
-      - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
+      - echo Logging into Docker Hub...
+      - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
   build:
     commands:
       - echo Building Docker image...
-      - docker build -t "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/python-app:latest" python-app/
-      - docker push "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/python-app:latest"
+      - docker build -t myapp:latest .
+      - docker tag myapp:latest $DOCKER_USERNAME/myapp:latest
+
   post_build:
     commands:
-      - echo Build successful
+      - echo Pushing image to Docker Hub...
+      - docker push $DOCKER_USERNAME/myapp:latest
+      - echo vuild complete!
