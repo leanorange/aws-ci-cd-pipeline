@@ -11,10 +11,11 @@ env:
     DOCKER_PASSWORD: myapp/docker/password
 
 phases:
-  pre_build:
-    commands:
-      - echo Logging into Docker Hub...
-      - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+pre_build:
+  commands:
+    - echo "Username=$DOCKER_USERNAME"
+    - echo "Password length=${#DOCKER_PASSWORD}"
+    - printf '%s' "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
   build:
     commands:
